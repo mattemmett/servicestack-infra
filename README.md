@@ -33,6 +33,17 @@ The repo is organized around reusable modules and environment specific entrypoin
 - Lab is the self-hosted physical home lab using Docker hosts and MinIO.
 - Prod is the AWS-managed customer-facing environment.
 
+## Current Verified Production Baseline
+
+The current AWS production baseline now includes:
+
+- shared remote state backed by S3 and lock coordination
+- one cost-aware VPC with a public app subnet and private database subnets
+- one minimal EC2 container host managed through SSM
+- one managed PostgreSQL RDS instance in private subnets
+
+The EC2 host is intentionally lean and is prepared for Docker-based application deployment.
+
 ## Working Rules
 
 - Build new infrastructure in the active root layout, not in the legacy copy.

@@ -113,6 +113,11 @@ Environment rules:
 - Do not assume lab resources belong in AWS.
 - Apply in the physical lab first whenever practical, then promote to AWS production.
 
+Verified production baseline notes:
+- The current prod baseline includes remote state, networking, security groups, one EC2 Docker host, and one RDS Postgres instance.
+- The EC2 host is managed through SSM and intentionally kept minimal.
+- On Amazon Linux 2023, prefer native Docker packages and the official Docker Compose CLI plugin path rather than assuming a repo package exists.
+
 ---
 
 ## State And Safety

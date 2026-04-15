@@ -46,11 +46,21 @@ This repo does not own:
 
 Near-term priorities are:
 
-1. establish the repository baseline and remote state pattern
-2. stand up low-cost core networking and security primitives
-3. provision RDS Postgres for migration off local EC2 database hosting
-4. provide ECR and deployment foundations for backend delivery
-5. support frontend hosting and ETL scheduling as the consolidation proceeds
+1. keep the new production baseline stable and well-documented
+2. provide ECR and deployment foundations for backend delivery
+3. support frontend hosting and ETL scheduling as the consolidation proceeds
+4. continue replacing manual or repo-local infra drift with repeatable IaC
+
+## Current Verified Baseline
+
+The repo now has a verified low-cost production baseline consisting of:
+
+- team-safe remote state
+- a production VPC and security groups
+- a minimal EC2 Docker host managed through SSM
+- a managed PostgreSQL RDS instance
+
+This establishes the core hosting path needed for the next deployment steps without overbuilding the platform too early.
 
 ## Operator Goals
 

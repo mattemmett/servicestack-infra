@@ -57,6 +57,7 @@ This keeps environment wiring separate from reusable infrastructure logic while 
 The current target topology is:
 
 - self-hosted lab environment in the physical home lab using Docker hosts and MinIO for pre-production validation
+- one AWS VPC with a public application subnet and private database subnets
 - one AWS EC2 Docker host for the production backend and reverse proxy path
 - one AWS RDS Postgres instance replacing local EC2-hosted Postgres in production
 - AWS S3 and CloudFront for the Flutter web console in production
@@ -64,6 +65,11 @@ The current target topology is:
 - AWS Route 53 and ACM for service-stack.io routing and certificates
 - shared IAM roles and policies for deploy and runtime use
 - later SES and SQS support for the invoice intake path
+
+Implementation note:
+- the production EC2 host is intentionally minimal and is managed through SSM
+- on Amazon Linux 2023, Docker is installed from the native distro packages
+- Docker Compose is installed via the official Docker CLI plugin path because a native Compose package is not consistently available in this environment
 
 ## Network Posture
 
