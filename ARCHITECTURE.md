@@ -9,10 +9,11 @@ See also: PRODUCT.md for repo intent and priorities, AGENTS.md for workflow rule
 
 | Layer | Technology | Purpose |
 |---|---|---|
-| IaC | OpenTofu | Infrastructure provisioning and change management |
-| Cloud | AWS | Runtime platform for compute, storage, networking, DNS, and managed services |
-| State | S3 plus lock coordination | Team-safe remote state management |
-| Runtime Targets | EC2, RDS, S3, CloudFront, EventBridge, ECS or Fargate | Target platform services as consolidation progresses |
+| IaC | OpenTofu | Infrastructure provisioning and change management for AWS-managed pieces |
+| Production Cloud | AWS | Production platform for compute, storage, networking, DNS, and managed services |
+| Lab Runtime | Docker hosts plus MinIO | Self-hosted integration environment in the physical home lab |
+| State | S3 plus lock coordination | Team-safe remote state management for AWS-managed infrastructure |
+| Runtime Targets | EC2, RDS, S3, CloudFront, EventBridge, ECS or Fargate | Primary AWS production targets as consolidation progresses |
 
 ## Repository Structure
 
@@ -28,26 +29,39 @@ The active repository is organized around a small number of top-level concerns:
 
 The folder named servicestack-infrastructure is legacy reference only and is not the active source of truth for new work.
 
+## Environment Model
+
+The repo currently supports a mixed environment model:
+
+- Dev: local or containerized developer workflows
+- Lab: self-hosted physical lab environment using Docker hosts and MinIO
+- Prod: AWS-managed production environment
+
+Important constraint:
+- Do not assume the lab environment should be provisioned in AWS.
+- AWS infrastructure work in this repo is primarily targeted at production unless a specific AWS lab task is explicitly requested.
+
 ## Composition Pattern
 
 The intended composition flow is:
 
-1. bootstrap shared remote state
-2. compose reusable modules in the lab environment
-3. validate outputs and behavior
-4. promote the same module patterns into production
+1. bootstrap shared remote state for AWS-managed infrastructure
+2. build reusable modules for production AWS concerns
+3. validate application and deployment behavior in the self-hosted lab where practical
+4. promote stable infrastructure changes into AWS production
 
-This keeps environment wiring separate from reusable infrastructure logic.
+This keeps environment wiring separate from reusable infrastructure logic while matching the actual deployment topology.
 
 ## Target Platform Topology
 
-The consolidation plan points toward this target topology:
+The current target topology is:
 
-- one EC2 Docker host for the backend and reverse proxy path
-- one RDS Postgres instance replacing local EC2-hosted Postgres
-- S3 and CloudFront for the Flutter web console
-- EventBridge and ECS or Fargate for nightly ETL scheduling and execution
-- Route 53 and ACM for service-stack.io routing and certificates
+- self-hosted lab environment in the physical home lab using Docker hosts and MinIO for pre-production validation
+- one AWS EC2 Docker host for the production backend and reverse proxy path
+- one AWS RDS Postgres instance replacing local EC2-hosted Postgres in production
+- AWS S3 and CloudFront for the Flutter web console in production
+- AWS EventBridge and ECS or Fargate for nightly ETL scheduling and execution in production
+- AWS Route 53 and ACM for service-stack.io routing and certificates
 - shared IAM roles and policies for deploy and runtime use
 - later SES and SQS support for the invoice intake path
 

@@ -28,11 +28,17 @@ The repo is organized around reusable modules and environment specific entrypoin
 - templates: cloud-init and nginx template assets
 - scripts: helper scripts for validation and rollout work
 
+## Environment Model
+
+- Lab is the self-hosted physical home lab using Docker hosts and MinIO.
+- Prod is the AWS-managed customer-facing environment.
+
 ## Working Rules
 
 - Build new infrastructure in the active root layout, not in the legacy copy.
 - Keep reusable logic in modules and environment wiring in environment stacks.
-- Apply changes in lab first, then promote to production after validation.
+- Do not assume the lab environment should be provisioned in AWS.
+- Apply and validate changes in the physical lab first when practical, then promote to AWS production.
 - Keep outputs stable for application repos that consume them.
 - Validate plan intent against real AWS state before implementing changes.
 

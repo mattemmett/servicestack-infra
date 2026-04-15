@@ -56,8 +56,8 @@ Near-term priorities are:
 
 The infrastructure should let operators:
 
-- understand what exists in AWS and why
-- apply changes first in lab, then in production
+- understand what exists in AWS and in the self-hosted lab and why
+- validate changes in the physical lab first, then promote to AWS production
 - recover safely from mistakes or failed rollouts
 - keep secrets out of source control
 - avoid unnecessary recurring cost during the early stage of the platform

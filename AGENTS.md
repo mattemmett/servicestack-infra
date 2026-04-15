@@ -103,14 +103,15 @@ Always verify first.
 
 Expected environment tiers:
 - Dev: local or containerized developer workflows
-- Lab: pre-production integration environment
-- Prod: customer-facing environment
+- Lab: self-hosted physical lab environment using Docker hosts and MinIO
+- Prod: AWS customer-facing environment
 
 Environment rules:
 - Keep variable values environment-scoped.
 - Keep state isolation clear between environments.
 - Never hardcode prod-only identifiers into shared modules.
-- Apply in lab first whenever practical.
+- Do not assume lab resources belong in AWS.
+- Apply in the physical lab first whenever practical, then promote to AWS production.
 
 ---
 
