@@ -71,6 +71,8 @@ The repo should start with a cost-aware baseline.
 
 Current design preference:
 - use an Internet Gateway for public edge access where needed
+- place application-facing infrastructure in public networking only where required
+- place database infrastructure in private subnets across multiple availability zones
 - avoid adding a NAT Gateway until there is a concrete operational need that justifies the recurring cost
 - keep security groups explicit and least-privilege oriented
 - isolate environment values cleanly between lab and production
