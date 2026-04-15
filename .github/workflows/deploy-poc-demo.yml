@@ -1,0 +1,28 @@
+name: Deploy web POC
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-poc:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy demo stack through SSM
+        env:
+          AWS_REGION: us-east-1
+        run: |
+          chmod +x scripts/deploy-poc-demo.sh
+          scripts/deploy-poc-demo.sh "${{ secrets.PROD_HOST_INSTANCE_ID }}"

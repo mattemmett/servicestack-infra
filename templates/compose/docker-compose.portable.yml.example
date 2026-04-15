@@ -1,0 +1,22 @@
+services:
+  app:
+    image: ${APP_IMAGE}
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "80:8080"
+
+  worker:
+    image: ${APP_IMAGE}
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: ${WORKER_COMMAND:-python -m app.worker}
+
+  scheduler:
+    image: ${APP_IMAGE}
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: ${SCHEDULER_COMMAND:-supercronic /app/crontab}
