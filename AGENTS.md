@@ -22,15 +22,15 @@ Planning note:
 ## Ownership
 
 servicestack-infra should own infrastructure definitions for:
-- Networking foundations (VPC, subnets, routing, security groups)
-- Compute hosting for backend workloads (EC2 and/or ECS/Fargate as adopted)
-- Database infrastructure (RDS Postgres)
-- Container registry resources (ECR)
-- Object storage and edge delivery for frontend hosting (S3 and CloudFront)
-- Scheduling and batch orchestration primitives (EventBridge, ECS task scheduling)
-- DNS and certificates (Route53, ACM)
+- Networking foundations such as VPCs, subnets, routing, and security groups
+- Compute hosting for backend workloads such as EC2 and ECS or Fargate
+- Database infrastructure such as RDS Postgres
+- Container registry resources such as ECR
+- Object storage and edge delivery for frontend hosting such as S3 and CloudFront
+- Scheduling and batch orchestration primitives such as EventBridge and ECS task scheduling
+- DNS and certificates such as Route 53 and ACM
 - Shared IAM roles and policies used by deploy pipelines and runtime services
-- Infrastructure for IIP intake path when folded in (SES, SQS, supporting IAM)
+- Infrastructure for the IIP intake path when folded in later, including SES, SQS, and supporting IAM
 
 Repos that still own application behavior:
 - servicestack: API, ETL logic, dashboard, schema behavior
@@ -44,13 +44,33 @@ Rule:
 
 ---
 
+## Repository Layout Conventions
+
+Use the active repo root structure as the working source of truth.
+
+Expected layout:
+- bootstrap/state-backend: one-time remote state bootstrap resources
+- modules: reusable infrastructure building blocks with narrow responsibilities
+- environments/lab: lab deployment entrypoint
+- environments/prod: production deployment entrypoint
+- templates: rendered assets such as cloud-init and nginx configuration
+- docs: architecture decisions, runbooks, and migration notes
+- scripts: helper tooling for validation, rollout, and migration support
+
+Legacy layout rule:
+- The folder named servicestack-infrastructure is reference-only during consolidation.
+- Do not treat it as the active location for new infrastructure development.
+- Reuse from it only after validating against the plan and live AWS state.
+
+---
+
 ## Source Of Truth And Validation
 
 For each infra task, run this order:
 1. Read target state from CONSOLIDATION_PLAN.md at workspace root.
 2. Compare with current repo code and live environment facts.
-3. Record any mismatch in the workspace tracker decision log.
-4. Implement only after mismatch is understood and approved.
+3. Record any mismatch in the appropriate docs or decision note.
+4. Implement only after the mismatch is understood and approved.
 
 Do not assume:
 - Resource names
@@ -67,13 +87,14 @@ Always verify first.
 
 Expected environment tiers:
 - Dev: local or containerized developer workflows
-- Lab: pre-prod integration environment
+- Lab: pre-production integration environment
 - Prod: customer-facing environment
 
 Environment rules:
 - Keep variable values environment-scoped.
 - Keep state isolation clear between environments.
 - Never hardcode prod-only identifiers into shared modules.
+- Apply in lab first whenever practical.
 
 ---
 
@@ -99,10 +120,10 @@ Secrets:
 ## Change Workflow
 
 Default workflow for any change:
-1. Confirm owner: does this belong in infra or app repo?
+1. Confirm owner: does this belong in infra or an app repo?
 2. Capture assumptions and unknowns.
-3. Resolve unknowns by reading current code and environment config.
-4. Plan minimal viable infra change.
+3. Resolve unknowns by reading current code and environment configuration.
+4. Plan the smallest viable infrastructure change.
 5. Apply in lab first.
 6. Validate outputs consumed by app repos.
 7. Promote to prod with rollback readiness.
@@ -119,10 +140,10 @@ For cross-repo changes:
 Keep infra outputs stable and documented for consumers.
 
 Typical required outputs:
-- Database connection endpoint metadata
-- Network and security identifiers used by runtime stacks
-- Registry coordinates for container image publishing
-- Host and distribution coordinates for API and frontend routing
+- database connection endpoint metadata
+- network and security identifiers used by runtime stacks
+- registry coordinates for container image publishing
+- host and distribution coordinates for API and frontend routing
 
 Contract rule:
 - If output shape or semantics change, update consumer repos in the same rollout plan.
@@ -136,24 +157,24 @@ Deployment posture:
 - Prefer non-interactive CI execution for plan and apply where feasible.
 
 CI baseline expectations:
-- Format and validation checks
-- Plan artifact generation
-- Approval gates for production apply
-- Clear mapping from commit to applied change set
+- format and validation checks
+- plan artifact generation
+- approval gates for production apply
+- clear mapping from commit to applied change set
 
 ---
 
 ## Migration Priorities From Consolidation Plan
 
 Priority sequence to align with current consolidation intent:
-1. Establish infra repository baseline and remote state pattern.
+1. Establish the infra repository baseline and remote state pattern.
 2. Consolidate existing infrastructure definitions from app repos.
-3. Stand up or validate RDS target and migration path.
-4. Ensure ECR path for backend image delivery.
-5. Define frontend hosting edge path (S3 and CloudFront).
+3. Stand up or validate the RDS target and migration path.
+4. Ensure the ECR path for backend image delivery.
+5. Define the frontend hosting edge path using S3 and CloudFront.
 6. Define ETL scheduler and runtime infrastructure.
 7. Incorporate DNS and certificate management for service-stack.io domains.
-8. Fold in IIP intake infrastructure when application fold-in reaches that phase.
+8. Fold in IIP intake infrastructure when the application fold-in reaches that phase.
 
 Each priority requires plan-versus-reality validation before execution.
 
@@ -162,11 +183,12 @@ Each priority requires plan-versus-reality validation before execution.
 ## Agent Operating Rules
 
 When working in this repo:
-- Prefer smallest safe change.
+- Prefer the smallest safe change.
 - Avoid broad refactors without a concrete migration reason.
 - Keep module boundaries clear and composable.
 - Document rationale for non-obvious infrastructure decisions.
 - Do not delete legacy resources until replacement is verified.
+- Favor the active module plus environment layout for all new work.
 
 If unsure:
 - Pause and document unknowns.
@@ -180,3 +202,4 @@ This repo is part of a multi-repo workspace. For cross-repo tasks:
 - Keep the workspace-level AGENTS.md context in view.
 - Track sequencing constraints in the workspace consolidation tracker.
 - Record durable architecture decisions where future agents can find them quickly.
+
