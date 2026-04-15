@@ -47,9 +47,10 @@ This repo does not own:
 Near-term priorities are:
 
 1. keep the new production baseline stable and well-documented
-2. provide ECR and deployment foundations for backend delivery
-3. support frontend hosting and ETL scheduling as the consolidation proceeds
-4. continue replacing manual or repo-local infra drift with repeatable IaC
+2. establish Git-driven deployment automation for both lab and prod
+3. keep the container runtime and worker model aligned across environments
+4. prepare safe historical data recovery needed to support the RDS migration path
+5. continue replacing manual or repo-local infra drift with repeatable IaC
 
 ## Current Verified Baseline
 
@@ -59,6 +60,7 @@ The repo now has a verified low-cost production baseline consisting of:
 - a production VPC and security groups
 - a minimal EC2 Docker host managed through SSM
 - a managed PostgreSQL RDS instance
+- a documented recovery path for archived historical exports needed during migration work
 
 This establishes the core hosting path needed for the next deployment steps without overbuilding the platform too early.
 

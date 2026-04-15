@@ -15,6 +15,7 @@ Primary scope includes:
 - static hosting and edge delivery
 - scheduled and batch infrastructure
 - DNS, certificates, and shared IAM
+- operational recovery runbooks for protected historical data needed during migrations
 
 ## Active Repository Layout
 
@@ -41,14 +42,24 @@ The current AWS production baseline now includes:
 - one cost-aware VPC with a public app subnet and private database subnets
 - one minimal EC2 container host managed through SSM
 - one managed PostgreSQL RDS instance in private subnets
+- a verified rollout and health-check path for container-based deployments
 
 The EC2 host is intentionally lean and is prepared for Docker-based application deployment.
+
+## Operational Recovery Notes
+
+- Historical export data in the production warehouse bucket is treated as irreplaceable and must not be deleted, overwritten, or bulk-copied during recovery work.
+- Some older menu export JSON assets under the warehouse date prefixes may be stored in S3 Glacier Flexible Retrieval while other report files remain in warmer tiers.
+- Recovery for those archived objects uses temporary S3 restore requests so the original objects remain in place.
+- See the runbooks folder for the documented restore workflow and verification steps.
 
 ## Working Rules
 
 - Build new infrastructure in the active root layout, not in the legacy copy.
 - Keep reusable logic in modules and environment wiring in environment stacks.
 - Do not assume the lab environment should be provisioned in AWS.
+- Prefer the same container runtime model in lab and prod wherever practical.
+- Use Git-driven deployment automation as the default operating path.
 - Apply and validate changes in the physical lab first when practical, then promote to AWS production.
 - Keep outputs stable for application repos that consume them.
 - Validate plan intent against real AWS state before implementing changes.
@@ -64,9 +75,9 @@ It is kept only as temporary reference material during consolidation and should 
 1. Bootstrap remote state.
 2. Stand up networking and shared security primitives.
 3. Add RDS and its outputs.
-4. Add ECR for image delivery.
+4. Define the deployment contract: image tags, registry choice, runtime layout, and CI deploy flow.
 5. Add EC2 host and routing templates.
 6. Add DNS and certificate resources.
 7. Add S3 and CloudFront for the console frontend.
-8. Add scheduler and batch runtime infrastructure.
+8. Add optional cloud-specific services only where they provide clear value without diverging from lab behavior.
 

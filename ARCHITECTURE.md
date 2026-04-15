@@ -13,7 +13,7 @@ See also: PRODUCT.md for repo intent and priorities, AGENTS.md for workflow rule
 | Production Cloud | AWS | Production platform for compute, storage, networking, DNS, and managed services |
 | Lab Runtime | Docker hosts plus MinIO | Self-hosted integration environment in the physical home lab |
 | State | S3 plus lock coordination | Team-safe remote state management for AWS-managed infrastructure |
-| Runtime Targets | EC2, RDS, S3, CloudFront, EventBridge, ECS or Fargate | Primary AWS production targets as consolidation progresses |
+| Runtime Targets | EC2, RDS, S3, CloudFront, and portable container workloads | Primary hosting and data targets while keeping runtime behavior aligned across environments |
 
 ## Repository Structure
 
@@ -61,15 +61,28 @@ The current target topology is:
 - one AWS EC2 Docker host for the production backend and reverse proxy path
 - one AWS RDS Postgres instance replacing local EC2-hosted Postgres in production
 - AWS S3 and CloudFront for the Flutter web console in production
-- AWS EventBridge and ECS or Fargate for nightly ETL scheduling and execution in production
+- containerized workers and scheduled jobs that follow the same runtime model in lab and prod
 - AWS Route 53 and ACM for service-stack.io routing and certificates
 - shared IAM roles and policies for deploy and runtime use
-- later SES and SQS support for the invoice intake path
+- later SES and SQS support for the invoice intake path only if they are still justified by the portable operating model
 
 Implementation note:
 - the production EC2 host is intentionally minimal and is managed through SSM
 - on Amazon Linux 2023, Docker is installed from the native distro packages
 - Docker Compose is installed via the official Docker CLI plugin path because a native Compose package is not consistently available in this environment
+- prefer a registry and deployment workflow that can serve both the self-hosted lab and AWS production without changing the application runtime model
+
+## Protected Historical Export Recovery
+
+The production data estate also includes a protected S3 exports warehouse that supports historical validation and migration work.
+
+Operational characteristics:
+- export folders are date-scoped using a `YYYYMMDD` naming convention under the warehouse prefix
+- older menu export JSON files may live in S3 Glacier Flexible Retrieval while CSV and XLS outputs may remain in Standard or Standard-IA
+- recovery work must use temporary restore requests only and must never delete, overwrite, or replace the source objects
+- restored objects remain tagged with the Glacier storage class in metadata even after they become temporarily readable
+
+Use the runbooks layer for the recovery workflow and verification steps before any database import or migration activity.
 
 ## Network Posture
 
