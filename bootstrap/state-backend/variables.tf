@@ -7,10 +7,11 @@ variable "aws_region" {
 variable "state_bucket_name" {
   description = "Name of the S3 bucket used for remote state"
   type        = string
+  default     = "servicestack-tfstate"
 }
 
 variable "lock_table_name" {
-  description = "Optional lock table name for state coordination"
+  description = "Lock table name for state coordination"
   type        = string
   default     = "servicestack-opentofu-locks"
 }

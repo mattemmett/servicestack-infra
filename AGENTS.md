@@ -64,6 +64,22 @@ Legacy layout rule:
 
 ---
 
+## Repository Reference Docs
+
+This repo now uses two top-level reference documents in addition to this guide:
+
+- PRODUCT.md: explains the platform and operator intent of the infrastructure repo, the problems it solves, scope boundaries, constraints, and near-term priorities
+- ARCHITECTURE.md: explains the technical structure of the repo, deployment topology, environment model, module boundaries, and implementation patterns
+
+Agent rules for these files:
+- Read PRODUCT.md when you need business context, goals, scope, priorities, or cost constraints
+- Read ARCHITECTURE.md when you need technical context, topology, repo structure, or environment and module design guidance
+- Keep both documents updated when durable repo behavior, scope, or architecture meaningfully changes
+- Do not duplicate deep implementation detail in PRODUCT.md; keep that in ARCHITECTURE.md or docs
+- Do not place business logic guidance in ARCHITECTURE.md unless it affects system design
+
+---
+
 ## Source Of Truth And Validation
 
 For each infra task, run this order:
