@@ -1,3 +1,9 @@
 
 # Local workspace-linked planning docs
 /CONSOLIDATION_PLAN.md
+
+# Legacy copied infra snapshot
+/servicestack-infrastructure/
+
+# macOS
+.DS_Store

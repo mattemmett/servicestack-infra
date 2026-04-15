@@ -1,0 +1,16 @@
+# Legacy copied infra directory
+# Ignore local Terraform state, secrets, plans, and machine-specific artifacts.
+
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+*.tfplan*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
