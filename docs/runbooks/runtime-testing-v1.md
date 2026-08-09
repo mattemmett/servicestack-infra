@@ -48,6 +48,11 @@ Exit criteria:
    - optional: `kms:Decrypt`
    - denied: write/delete/object ownership changes
 
+Current note:
+- The EC2 ETL role read-only split has been verified manually against `servicestack-exports-warehouse-prod`.
+- The bucket policy deny for the EC2 role is in place, and the producer Lambda writer remains able to write.
+- The remaining gap is codifying that guardrail in the owning infra repo so it survives future applies.
+
 Exit criteria:
 - ETL runtime role can read exactly what it needs and nothing more.
 
