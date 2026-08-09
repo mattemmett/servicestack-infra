@@ -67,6 +67,11 @@ module "dns" {
       ttl     = 300
       records = [module.ec2_host.public_ip]
     }
+    console = {
+      name    = "console.service-stack.io"
+      ttl     = 300
+      records = [module.ec2_host.public_ip]
+    }
   }
 }
 

@@ -6,6 +6,7 @@ data "aws_route53_zone" "this" {
 resource "aws_route53_record" "this" {
   for_each = var.records
 
+  allow_overwrite = true
   zone_id = data.aws_route53_zone.this.zone_id
   name    = each.value.name
   type    = "A"
