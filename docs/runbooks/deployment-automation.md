@@ -11,6 +11,50 @@ This runbook defines the shared deployment model intended to keep lab and produc
 
 ## Recommended Initial Contract
 
+## Finalized Initial Contract (2026-08-09)
+
+This section captures the concrete decisions required to close the initial production deploy contract.
+
+### App image build and publish workflow
+
+- Build and publish is owned by the application repo.
+- Initial CI reference workflow is `.github/workflows/publish-ghcr-hello.yml` in this repo.
+- Production host deploy trigger reference is `.github/workflows/deploy-ghcr-poc.yml` in this repo.
+
+### Image tag strategy
+
+- Required deploy tag: immutable commit SHA tag.
+- Optional convenience tags: `latest` and release tags (for operator visibility only).
+- Rollback rule: deploy by immutable tag, not by `latest`.
+
+### Registry credential path
+
+- Registry: GHCR (`ghcr.io`).
+- CI stores registry secret as repository secret.
+- Host rollout scripts accept either `GHCR_TOKEN` or `GHCR_PAT` plus `GHCR_USERNAME`.
+- Local operator workflow keeps secrets in `.env.local` (untracked).
+
+### Deploy command contract
+
+- Deploy surface for app repos is SSM-based compose rollout using `scripts/deploy-via-ssm.sh`.
+- Required inputs:
+	- `INSTANCE_ID`
+	- `IMAGE_TAG` (when compose uses tag indirection)
+	- `GHCR_USERNAME`
+	- `GHCR_TOKEN` or `GHCR_PAT`
+- Default runtime paths:
+	- `APP_DIR=/opt/servicestack/app`
+	- `COMPOSE_FILE=docker-compose.yml`
+	- `ENV_FILE=.env`
+
+### Health-check contract
+
+- Post-deploy verification must include:
+	- `docker compose ps` shows expected services running.
+	- service health endpoint returns success from host context.
+- Initial required endpoint contract: `/healthz` returns HTTP 200 with body `ok`.
+- Deployment is not considered successful on compose exit code alone.
+
 ### 1. Image build and tagging
 
 Application repos should produce a single canonical container image per service.
@@ -28,6 +72,10 @@ Preferred initial posture:
 - prefer a single image source for both environments where possible
 
 A GitHub-first registry approach is often the simplest way to keep lab and prod aligned early on.
+
+If the image is private, the production host must receive a GHCR login before `docker compose pull`.
+The shared rollout helper supports this when `GHCR_USERNAME` and `GHCR_TOKEN` are provided.
+For CI-driven deployment of the GHCR proof stack, use the `Deploy GHCR POC` workflow with repository secrets for image and credentials.
 
 ## 3. Runtime layout
 

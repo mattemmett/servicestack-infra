@@ -34,6 +34,31 @@ The repo is organized around reusable modules and environment specific entrypoin
 - Lab is the self-hosted physical home lab using Docker hosts and MinIO.
 - Prod is the AWS-managed customer-facing environment.
 
+## Local AWS Access Workflow
+
+Use this repo workflow before any plan or apply:
+
+1. Set your profile and region in `.env.local`.
+2. Refresh your SSH allowlist CIDR to your current public IP.
+3. Run AWS preflight checks to verify profile and caller identity.
+4. Run plan from `environments/prod`.
+
+Commands:
+
+```bash
+source scripts/load-local-env.sh
+./scripts/update-ssh-cidr.sh
+./scripts/whoami-aws.sh
+tofu -chdir=environments/prod plan
+```
+
+Notes:
+
+- Prefer SSM for host operations; treat SSH as break-glass access.
+- Keep Terraform region in `environments/prod/terraform.tfvars` as the primary source; use `TF_VAR_aws_region` only for temporary overrides.
+- Do not put AWS access keys in repo files. Keep credentials in local AWS profile files.
+- Helper scripts are documented in `scripts/README.md`.
+
 ## Current Verified Production Baseline
 
 The current AWS production baseline now includes:

@@ -1,0 +1,29 @@
+name: guardrails-exports-boundary
+
+on:
+  pull_request:
+    paths:
+      - '**/*.tf'
+      - 'scripts/check-exports-boundary.sh'
+      - '.github/workflows/guardrails-exports-boundary.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.tf'
+      - 'scripts/check-exports-boundary.sh'
+      - '.github/workflows/guardrails-exports-boundary.yml'
+
+jobs:
+  validate-exports-boundary:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install ripgrep
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
+
+      - name: Verify exports ownership boundary
+        run: bash scripts/check-exports-boundary.sh

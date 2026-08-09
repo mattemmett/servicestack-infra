@@ -2,31 +2,32 @@
 set -euo pipefail
 
 INSTANCE_ID="${1:-}"
+ENV_SOURCE_FILE="${2:-}"
 AWS_REGION="${AWS_REGION:-us-east-1}"
-STACK_DIR="${STACK_DIR:-/opt/servicestack/poc-web-hello}"
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+APP_DIR="${APP_DIR:-/opt/servicestack/app}"
+ENV_TARGET_FILE="${ENV_TARGET_FILE:-.env}"
 
 # Avoid interactive pager prompts from AWS CLI output.
 export AWS_PAGER=""
 
-if [[ -z "$INSTANCE_ID" ]]; then
-  echo "usage: $0 <instance-id>" >&2
+if [[ -z "$INSTANCE_ID" || -z "$ENV_SOURCE_FILE" ]]; then
+  echo "usage: $0 <instance-id> <local-env-file>" >&2
   exit 1
 fi
 
-COMPOSE_B64=$(base64 < "$ROOT_DIR/poc/web-hello/docker-compose.yml" | tr -d '\n')
-NGINX_B64=$(base64 < "$ROOT_DIR/poc/web-hello/nginx/default.conf" | tr -d '\n')
+if [[ ! -f "$ENV_SOURCE_FILE" ]]; then
+  echo "env file not found: $ENV_SOURCE_FILE" >&2
+  exit 1
+fi
+
+ENV_B64=$(base64 < "$ENV_SOURCE_FILE" | tr -d '\n')
 
 REMOTE_COMMANDS=(
   "set -euo pipefail"
-  "mkdir -p ${STACK_DIR}/nginx"
-  "printf '%s' '${COMPOSE_B64}' | base64 -d > ${STACK_DIR}/docker-compose.yml"
-  "printf '%s' '${NGINX_B64}' | base64 -d > ${STACK_DIR}/nginx/default.conf"
-  "cd ${STACK_DIR}"
-  "docker compose pull"
-  "docker compose up -d --remove-orphans"
-  "docker compose ps"
-  "curl -fsS http://localhost/healthz"
+  "mkdir -p ${APP_DIR}"
+  "printf '%s' '${ENV_B64}' | base64 -d > ${APP_DIR}/${ENV_TARGET_FILE}"
+  "chmod 600 ${APP_DIR}/${ENV_TARGET_FILE}"
+  "ls -l ${APP_DIR}/${ENV_TARGET_FILE}"
 )
 
 COMMAND_LIST=$(printf '"%s",' "${REMOTE_COMMANDS[@]}")
@@ -37,7 +38,7 @@ COMMAND_ID=$(aws ssm send-command \
   --region "$AWS_REGION" \
   --instance-ids "$INSTANCE_ID" \
   --document-name "AWS-RunShellScript" \
-  --comment "Deploy web hello POC" \
+  --comment "Upload runtime env file" \
   --parameters "commands=${COMMAND_LIST}" \
   --query 'Command.CommandId' \
   --output text)

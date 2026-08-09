@@ -1,0 +1,16 @@
+services:
+  hello:
+    image: ${GHCR_IMAGE}
+    restart: unless-stopped
+    expose:
+      - "80"
+
+  edge:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    depends_on:
+      - hello
+    ports:
+      - "${HOST_PORT:-8080}:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro

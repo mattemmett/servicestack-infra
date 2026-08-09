@@ -68,6 +68,11 @@ variable "https_cidr_blocks" {
   default = ["0.0.0.0/0"]
 }
 
+variable "route53_zone_name" {
+  type    = string
+  default = "service-stack.io"
+}
+
 variable "host_instance_type" {
   type    = string
   default = "t3.small"
@@ -78,9 +83,34 @@ variable "host_root_volume_size" {
   default = 30
 }
 
+variable "host_ami_id" {
+  type    = string
+  default = "ami-098e39bafa7e7303d"
+}
+
 variable "host_associate_public_ip_address" {
   type    = bool
   default = true
+}
+
+variable "enable_exports_read_only" {
+  type    = bool
+  default = false
+}
+
+variable "exports_bucket_arn" {
+  type    = string
+  default = null
+}
+
+variable "exports_object_prefixes" {
+  type    = list(string)
+  default = []
+}
+
+variable "exports_kms_key_arn" {
+  type    = string
+  default = null
 }
 
 variable "db_identifier" {

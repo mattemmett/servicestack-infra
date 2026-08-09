@@ -1,6 +1,7 @@
 
 # Local workspace-linked planning docs
 /CONSOLIDATION_PLAN.md
+/CONSOLIDATION_IDENTITY_MODEL.md
 
 # Legacy copied infra snapshot
 /servicestack-infrastructure/
@@ -18,6 +19,13 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+/environments/prod/tfplan
+
+# Local Docker client config
+.docker/
 
 # macOS
 .DS_Store
+
+# Local-only environment overrides
+.env.local

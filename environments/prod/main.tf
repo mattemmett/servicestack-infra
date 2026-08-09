@@ -47,6 +47,29 @@ module "security" {
   tags              = local.common_tags
 }
 
+module "dns" {
+  source = "../../modules/dns"
+
+  zone_name = var.route53_zone_name
+  records = {
+    api = {
+      name    = "api.service-stack.io"
+      ttl     = 300
+      records = [module.ec2_host.public_ip]
+    }
+    dashboard = {
+      name    = "dashboard.service-stack.io"
+      ttl     = 300
+      records = [module.ec2_host.public_ip]
+    }
+    console_next = {
+      name    = "console-next.service-stack.io"
+      ttl     = 300
+      records = [module.ec2_host.public_ip]
+    }
+  }
+}
+
 module "ec2_host" {
   source = "../../modules/ec2_host"
 
@@ -55,7 +78,12 @@ module "ec2_host" {
   security_group_id           = module.security.app_security_group_id
   instance_type               = var.host_instance_type
   root_volume_size            = var.host_root_volume_size
+  ami_id                      = var.host_ami_id
   associate_public_ip_address = var.host_associate_public_ip_address
+  enable_exports_read_only    = var.enable_exports_read_only
+  exports_bucket_arn          = var.exports_bucket_arn
+  exports_object_prefixes     = var.exports_object_prefixes
+  exports_kms_key_arn         = var.exports_kms_key_arn
   user_data_template_path     = "${path.root}/../../templates/cloud_init/docker-host.sh.tftpl"
   tags                        = local.common_tags
 }

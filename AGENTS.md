@@ -78,15 +78,19 @@ Agent rules for these files:
 - Do not duplicate deep implementation detail in PRODUCT.md; keep that in ARCHITECTURE.md or docs
 - Do not place business logic guidance in ARCHITECTURE.md unless it affects system design
 
+For future validation work around private-image deployment and runtime smoke tests, see [docs/runbooks/ghcr-poc-validation.md](docs/runbooks/ghcr-poc-validation.md).
+For the production rollout sequence and live checklist, see [docs/runbooks/prod-rollout-checklist.md](docs/runbooks/prod-rollout-checklist.md).
+
 ---
 
 ## Source Of Truth And Validation
 
 For each infra task, run this order:
-1. Read target state from CONSOLIDATION_PLAN.md at workspace root.
-2. Compare with current repo code and live environment facts.
-3. Record any mismatch in the appropriate docs or decision note.
-4. Implement only after the mismatch is understood and approved.
+1. Read target state from `servicestack/CONSOLIDATION_PLAN.md`.
+2. Read `servicestack/INFRA_HANDOFF.md` for cross-repo ownership/contracts and latest reality checks.
+3. Compare with current repo code and live environment facts.
+4. Record any mismatch in the appropriate docs or decision note.
+5. Implement only after the mismatch is understood and approved.
 
 Do not assume:
 - Resource names
@@ -127,6 +131,11 @@ State management:
 - Use remote state backend for team-safe operations.
 - Lock state during apply operations.
 - Keep backend bootstrap steps documented and separate from workload modules.
+
+Exports boundary guardrail:
+- The producer-owned exports warehouse bucket must never be created, imported, or mutated by this repo.
+- Reference that bucket only through contract inputs (variables, SSM values, or remote-state outputs).
+- Before any Terraform plan/apply affecting ownership or IAM access, run `bash scripts/check-exports-boundary.sh`.
 
 Safety controls:
 - Treat destructive actions as explicit opt-in.

@@ -49,3 +49,11 @@ output "rds_port" {
 output "rds_instance_id" {
   value = module.rds_postgres.db_instance_id
 }
+
+output "route53_zone_id" {
+  value = module.dns.zone_id
+}
+
+output "route53_record_fqdns" {
+  value = module.dns.record_fqdns
+}
