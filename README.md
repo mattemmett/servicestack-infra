@@ -71,6 +71,16 @@ The current AWS production baseline now includes:
 
 The EC2 host is intentionally lean and is prepared for Docker-based application deployment.
 
+Current validated rollout posture:
+
+- the consolidated app repo publishes a single GHCR-backed app image tagged by immutable commit SHA
+- the app repo renders `.env.prod` from infra outputs plus SSM parameters, uploads it to the host, uploads app runtime manifests, and calls the generic SSM deploy helper from this repo
+- the host runs the compose stack from `/opt/servicestack/app`
+- post-deploy verification is SSM-driven and checks both container status and host-routed application endpoints
+- schema init and core seed are bootstrap or DR operations, not the steady-state deploy path
+
+See [docs/runbooks/servicestack-app-infra-contract.md](docs/runbooks/servicestack-app-infra-contract.md) for the current app/infra contract.
+
 ## Operational Recovery Notes
 
 - Historical export data in the production warehouse bucket is treated as irreplaceable and must not be deleted, overwritten, or bulk-copied during recovery work.
@@ -85,6 +95,7 @@ The EC2 host is intentionally lean and is prepared for Docker-based application 
 - Do not assume the lab environment should be provisioned in AWS.
 - Prefer the same container runtime model in lab and prod wherever practical.
 - Use Git-driven deployment automation as the default operating path.
+- Keep generic deploy primitives here, but keep app-specific lifecycle wrappers in the app repo.
 - Apply and validate changes in the physical lab first when practical, then promote to AWS production.
 - Keep outputs stable for application repos that consume them.
 - Validate plan intent against real AWS state before implementing changes.

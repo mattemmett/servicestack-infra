@@ -2,6 +2,8 @@
 
 Purpose: preserve the monorepo `.env.dev` variable model while running on the infra-managed production host.
 
+Current validated consumer: the consolidated `servicestack` app repo renders `.env.prod` locally, uploads it through SSM, and deploys the compose stack on the infra-managed host.
+
 ## How The App Repo Learns Values
 
 The app repo should not guess infrastructure values.
@@ -10,6 +12,7 @@ The app repo should not guess infrastructure values.
 - Another repo can read those outputs through `terraform_remote_state` when it needs to wire deploy-time settings.
 - Secret values, especially database credentials, come from SSM parameters and are injected into runtime env files, not stored in source control.
 - Runtime env files are rendered from those inputs and uploaded to the host through the SSM deploy helpers.
+- The current app repo helper is `make env-prod-from-ssm`, which renders `.env.prod` from this repo's Terraform outputs plus SSM parameter values.
 - Read-only exports source values are provided through the runtime env file or remote-state/SSM contract, not by hardcoding them into app code.
 
 ## Concrete Reading Model
@@ -100,6 +103,11 @@ If you upload as `.env.prod`, deploy with:
 ```bash
 ENV_FILE=.env.prod bash scripts/deploy-via-ssm.sh <instance-id>
 ```
+
+Current validated rollout detail:
+- the app repo uploads `.env.prod` to `/opt/servicestack/app/.env.prod`
+- the app repo also appends `ENV_FILE=.env.prod` to the uploaded env payload so compose interpolation resolves the correct runtime env file on host
+- the app repo uploads its own `docker-compose.yml` and `nginx.conf` beside the env file before invoking `deploy-via-ssm.sh`
 
 ## Secrets Guidance
 

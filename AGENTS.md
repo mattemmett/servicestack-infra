@@ -80,11 +80,22 @@ Agent rules for these files:
 
 For future validation work around private-image deployment and runtime smoke tests, see [docs/runbooks/ghcr-poc-validation.md](docs/runbooks/ghcr-poc-validation.md).
 For the production rollout sequence and live checklist, see [docs/runbooks/prod-rollout-checklist.md](docs/runbooks/prod-rollout-checklist.md).
+For the current contract between this repo and the consolidated app repo, see [docs/runbooks/servicestack-app-infra-contract.md](docs/runbooks/servicestack-app-infra-contract.md).
 
 ---
 
+Current validated deployment split:
+- `servicestack` owns the CLI-first release surface used by operators: image publish, app-specific compose deploy, schema bootstrap, core seed, and smoke targets.
+- `servicestack-infra` owns the generic host-side primitives those flows consume: Terraform outputs, SSM host access, runtime env upload helper, and generic compose rollout helper.
+- Treat `db-init` style schema bootstrap as an app concern even when it runs on the infra-managed host.
+
 ## Source Of Truth And Validation
 
+For app-runtime deployment changes specifically:
+1. Update the shared contract doc in this repo first.
+2. Update the `servicestack` Makefile/scripts second.
+3. Validate with SSM-driven smoke checks against the real host.
+4. Document whether the flow is bootstrap or DR-only versus steady-state release-safe.
 For each infra task, run this order:
 1. Read target state from `servicestack/CONSOLIDATION_PLAN.md`.
 2. Read `servicestack/INFRA_HANDOFF.md` for cross-repo ownership/contracts and latest reality checks.

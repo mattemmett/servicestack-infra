@@ -20,6 +20,10 @@ This section captures the concrete decisions required to close the initial produ
 - Build and publish is owned by the application repo.
 - Initial CI reference workflow is `.github/workflows/publish-ghcr-hello.yml` in this repo.
 - Production host deploy trigger reference is `.github/workflows/deploy-ghcr-poc.yml` in this repo.
+- Current validated operator entrypoints are now in the app repo:
+	- `make prod-bootstrap`
+	- `make prod-deploy`
+	- `make prod-smoke`
 
 ### Image tag strategy
 
@@ -39,21 +43,30 @@ This section captures the concrete decisions required to close the initial produ
 - Deploy surface for app repos is SSM-based compose rollout using `scripts/deploy-via-ssm.sh`.
 - Required inputs:
 	- `INSTANCE_ID`
-	- `IMAGE_TAG` (when compose uses tag indirection)
+	- app runtime env file, currently uploaded as `.env.prod`
+	- app runtime manifests, currently `docker-compose.yml` and `nginx.conf`
 	- `GHCR_USERNAME`
 	- `GHCR_TOKEN` or `GHCR_PAT`
 - Default runtime paths:
 	- `APP_DIR=/opt/servicestack/app`
 	- `COMPOSE_FILE=docker-compose.yml`
-	- `ENV_FILE=.env`
+	- `ENV_FILE=.env` in the generic helper, overridden by the app repo to `.env.prod`
 
 ### Health-check contract
 
 - Post-deploy verification must include:
 	- `docker compose ps` shows expected services running.
 	- service health endpoint returns success from host context.
-- Initial required endpoint contract: `/healthz` returns HTTP 200 with body `ok`.
+- Current validated ServiceStack app contract:
+	- API `Host: api.service-stack.io` on `/health` returns HTTP 200 and JSON body including `{"status":"ok"}`
+	- Dashboard `Host: dashboard.service-stack.io` on `/` returns HTTP 200
 - Deployment is not considered successful on compose exit code alone.
+
+### Bootstrap vs steady-state contract
+
+- Rare bootstrap or DR flow may include schema init and core auth seed after deploy.
+- Steady-state app releases should be image replacement plus smoke verification.
+- Incremental database migration must become a distinct release step and must not reuse destructive schema bootstrap flows.
 
 ### 1. Image build and tagging
 
@@ -105,6 +118,7 @@ Recommended flow:
 - application repos own image build logic and service-specific runtime configuration
 - this infra repo owns the host, network, state, and shared deployment conventions
 - helper rollout scripts can live here when they are generic and environment-oriented rather than app-specific
+- application repos own lifecycle wrappers that combine generic helpers into bootstrap, deploy, seed, and smoke command surfaces
 
 ## Current Verified Production Posture
 

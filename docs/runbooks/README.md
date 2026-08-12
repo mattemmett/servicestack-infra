@@ -5,6 +5,7 @@ Store operational runbooks here for deploy, rollback, recovery, validation, and 
 Current runbooks:
 
 - deployment-automation.md: shared deployment contract for lab and production rollouts
+- servicestack-app-infra-contract.md: current ownership and deploy contract between `servicestack-infra` and the consolidated `servicestack` app repo
 - tls-cost-decision.md: cost-first TLS decision and upgrade triggers for when to move from host nginx TLS to ALB plus ACM
 - tls-letsencrypt-ec2.md: SSM-first runbook for issuing and renewing Let's Encrypt certificates on the current EC2 host model
 - ghcr-smoke-test.md: private registry pull proof on the current prod host using a tiny GHCR-backed demo image

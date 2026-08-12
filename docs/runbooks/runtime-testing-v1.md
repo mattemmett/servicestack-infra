@@ -49,11 +49,11 @@ Exit criteria:
    - denied: write/delete/object ownership changes
 
 Current note:
-- The EC2 ETL role read-only split has been verified manually against `servicestack-exports-warehouse-prod`.
-- The bucket policy deny for the EC2 role is in place, and the producer Lambda writer remains able to write.
-- The remaining gap is codifying that guardrail in the owning infra repo so it survives future applies.
-- DNS cutover milestone: `console.service-stack.io` now points at the new host, and `console-next.service-stack.io` remains live for transition.
-- The new host currently returns the host/nginx response, so final console runtime wiring is still a follow-on step.
+- The EC2 ETL role read-only split has been verified manually against `servicestack-exports-warehouse-prod`, but it still needs to be codified in the owning infra repo.
+- The bucket policy deny for the EC2 role is demonstrated manually, and the producer Lambda writer remains able to write.
+- The console DNS change is committed, but the actual deployment has not been applied yet.
+- `console-next.service-stack.io` remains the transition path until the runtime is deployed and validated.
+- The new host still returns the host/nginx response, so final console runtime wiring remains a follow-on step.
 
 Exit criteria:
 - ETL runtime role can read exactly what it needs and nothing more.

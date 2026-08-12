@@ -14,6 +14,7 @@ Current examples:
 Guidance:
 
 - keep scripts environment-oriented and reusable rather than app-specific
+- current production app wrappers live in the `servicestack` repo and call these scripts; do not duplicate app lifecycle orchestration here unless it is truly infra-generic
 - prefer SSM-based operational flows for the production Docker host when practical
 - pair rollout scripts with verification steps such as health checks and log inspection
 - run exports-boundary checks before plan/apply when changes touch Terraform ownership patterns
