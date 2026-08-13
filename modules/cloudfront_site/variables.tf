@@ -1,5 +1,17 @@
 locals {
   origin_id = "${var.name_prefix}-app-origin"
+
+  # An API hostname serves dynamic routes at the root, so its default behavior must
+  # neither cache nor reject write methods.
+  default_cache_policy_id = var.default_caching_disabled ? data.aws_cloudfront_cache_policy.caching_disabled.id : data.aws_cloudfront_cache_policy.caching_optimized.id
+
+  default_allowed_methods = var.default_caching_disabled ? ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"] : ["GET", "HEAD", "OPTIONS"]
+}
+
+variable "default_caching_disabled" {
+  description = "Disable caching on the default behavior; use for hostnames that serve the API at the root"
+  type        = bool
+  default     = false
 }
 
 variable "name_prefix" {

@@ -76,7 +76,13 @@ variable "route53_zone_name" {
 variable "edge_aliases" {
   description = "Hostnames served by the CloudFront distribution"
   type        = list(string)
-  default     = ["console-next.service-stack.io"]
+  default     = ["console.service-stack.io", "console-next.service-stack.io"]
+}
+
+variable "app_edge_aliases" {
+  description = "Hostnames served by the uncached API/dashboard distribution"
+  type        = list(string)
+  default     = ["api-next.service-stack.io", "dashboard-next.service-stack.io"]
 }
 
 variable "host_instance_type" {

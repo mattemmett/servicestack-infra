@@ -67,6 +67,20 @@ module "cloudfront_site" {
   tags                = local.common_tags
 }
 
+# Separate distribution: these hostnames serve dynamic responses at the root, so
+# caching must be off by default rather than only on /api/*.
+module "cloudfront_app" {
+  source = "../../modules/cloudfront_site"
+
+  name_prefix              = "${local.stack_name}-app"
+  aliases                  = var.app_edge_aliases
+  acm_certificate_arn      = module.certificates.certificate_arn
+  origin_domain_name       = module.ec2_host.public_dns
+  default_caching_disabled = true
+  api_path_patterns        = []
+  tags                     = local.common_tags
+}
+
 module "dns" {
   source = "../../modules/dns"
 
@@ -82,19 +96,29 @@ module "dns" {
       ttl     = 300
       records = [module.ec2_host.public_ip]
     }
-    console = {
-      name    = "console.service-stack.io"
-      ttl     = 300
-      records = [module.ec2_host.public_ip]
-    }
   }
 
-  # console-next validates the edge path before console is cut over.
   alias_records = {
+    console = {
+      name                  = "console.service-stack.io"
+      target_dns_name       = module.cloudfront_site.domain_name
+      target_hosted_zone_id = module.cloudfront_site.hosted_zone_id
+    }
     console_next = {
       name                  = "console-next.service-stack.io"
       target_dns_name       = module.cloudfront_site.domain_name
       target_hosted_zone_id = module.cloudfront_site.hosted_zone_id
+    }
+    # -next hostnames validate the edge before api and dashboard are cut over.
+    api_next = {
+      name                  = "api-next.service-stack.io"
+      target_dns_name       = module.cloudfront_app.domain_name
+      target_hosted_zone_id = module.cloudfront_app.hosted_zone_id
+    }
+    dashboard_next = {
+      name                  = "dashboard-next.service-stack.io"
+      target_dns_name       = module.cloudfront_app.domain_name
+      target_hosted_zone_id = module.cloudfront_app.hosted_zone_id
     }
   }
 }
