@@ -1,3 +1,9 @@
+# AWS-published ranges for CloudFront's origin-facing servers.
+data "aws_ec2_managed_prefix_list" "cloudfront_origin" {
+  count = var.restrict_http_to_cloudfront ? 1 : 0
+  name  = "com.amazonaws.global.cloudfront.origin-facing"
+}
+
 resource "aws_security_group" "app" {
   name        = "${var.name_prefix}-app-sg"
   description = "App host access"
@@ -15,10 +21,11 @@ resource "aws_security_group" "app" {
   }
 
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = var.http_cidr_blocks
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    cidr_blocks     = var.restrict_http_to_cloudfront ? [] : var.http_cidr_blocks
+    prefix_list_ids = var.restrict_http_to_cloudfront ? [data.aws_ec2_managed_prefix_list.cloudfront_origin[0].id] : []
   }
 
   ingress {

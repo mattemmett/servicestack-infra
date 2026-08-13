@@ -82,7 +82,18 @@ variable "edge_aliases" {
 variable "app_edge_aliases" {
   description = "Hostnames served by the uncached API/dashboard distribution"
   type        = list(string)
-  default     = ["api-next.service-stack.io", "dashboard-next.service-stack.io"]
+  default = [
+    "api.service-stack.io",
+    "api-next.service-stack.io",
+    "dashboard.service-stack.io",
+    "dashboard-next.service-stack.io",
+  ]
+}
+
+variable "restrict_http_to_cloudfront" {
+  description = "Allow port 80 only from CloudFront origin-facing ranges"
+  type        = bool
+  default     = false
 }
 
 variable "host_instance_type" {

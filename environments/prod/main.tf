@@ -39,12 +39,13 @@ module "networking" {
 module "security" {
   source = "../../modules/security"
 
-  name_prefix       = local.stack_name
-  vpc_id            = module.networking.vpc_id
-  ssh_cidr_blocks   = var.ssh_cidr_blocks
-  http_cidr_blocks  = var.http_cidr_blocks
-  https_cidr_blocks = var.https_cidr_blocks
-  tags              = local.common_tags
+  name_prefix                 = local.stack_name
+  vpc_id                      = module.networking.vpc_id
+  ssh_cidr_blocks             = var.ssh_cidr_blocks
+  http_cidr_blocks            = var.http_cidr_blocks
+  https_cidr_blocks           = var.https_cidr_blocks
+  restrict_http_to_cloudfront = var.restrict_http_to_cloudfront
+  tags                        = local.common_tags
 }
 
 module "certificates" {
@@ -85,20 +86,19 @@ module "dns" {
   source = "../../modules/dns"
 
   zone_name = var.route53_zone_name
-  records = {
-    api = {
-      name    = "api.service-stack.io"
-      ttl     = 300
-      records = [module.ec2_host.public_ip]
-    }
-    dashboard = {
-      name    = "dashboard.service-stack.io"
-      ttl     = 300
-      records = [module.ec2_host.public_ip]
-    }
-  }
+  records   = {}
 
   alias_records = {
+    api = {
+      name                  = "api.service-stack.io"
+      target_dns_name       = module.cloudfront_app.domain_name
+      target_hosted_zone_id = module.cloudfront_app.hosted_zone_id
+    }
+    dashboard = {
+      name                  = "dashboard.service-stack.io"
+      target_dns_name       = module.cloudfront_app.domain_name
+      target_hosted_zone_id = module.cloudfront_app.hosted_zone_id
+    }
     console = {
       name                  = "console.service-stack.io"
       target_dns_name       = module.cloudfront_site.domain_name
