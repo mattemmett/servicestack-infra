@@ -73,6 +73,12 @@ variable "route53_zone_name" {
   default = "service-stack.io"
 }
 
+variable "edge_aliases" {
+  description = "Hostnames served by the CloudFront distribution"
+  type        = list(string)
+  default     = ["console-next.service-stack.io"]
+}
+
 variable "host_instance_type" {
   type    = string
   default = "t3.small"
