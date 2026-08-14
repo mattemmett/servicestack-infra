@@ -18,6 +18,7 @@ Before starting checklist execution, run the Local AWS Access Workflow in `READM
 
 - [x] Confirm the production values file exists and is populated for [environments/prod](../../environments/prod)
 - [x] Confirm the database credentials exist in SSM for `/servicestack/db-user` and `/servicestack/db-password`
+- [x] Confirm the JWT signing secret exists in SSM for `/servicestack/jwt-secret`
 - [x] Confirm the SSH CIDR is restricted to a trusted source
 - [x] Confirm the Route 53 zone and host naming assumptions are valid
 - [x] Confirm the AMI and instance size are suitable for the planned runtime

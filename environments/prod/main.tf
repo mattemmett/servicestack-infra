@@ -65,6 +65,7 @@ module "cloudfront_site" {
   aliases             = var.edge_aliases
   acm_certificate_arn = module.certificates.certificate_arn
   origin_domain_name  = module.ec2_host.public_dns
+  api_path_patterns   = ["/api/*", "/auth/*"]
   tags                = local.common_tags
 }
 

@@ -21,7 +21,7 @@ All public traffic terminates TLS at CloudFront and is forwarded to the EC2 host
 
 | Hostname | Distribution | Caching | Backing service |
 |---|---|---|---|
-| `console.service-stack.io`, `console-next` | `cloudfront_site` | cached, `/api/*` uncached | `console` container, `/api/` proxied to `api` |
+| `console.service-stack.io`, `console-next` | `cloudfront_site` | cached, `/api/*` and `/auth/*` uncached | `console` container, `/api/` and `/auth/` proxied to `api` |
 | `api.service-stack.io`, `api-next` | `cloudfront_app` | disabled | `api` container |
 | `dashboard.service-stack.io`, `dashboard-next` | `cloudfront_app` | disabled | `dashboard` container |
 
@@ -60,7 +60,7 @@ The current validated production path is:
 - Dockerfile and application container image contents
 - the console image (`ghcr.io/mattemmett/servicestack-console`), built from the host Flutter toolchain
 - app `docker-compose.yml`, including the `console` service
-- app runtime `nginx.conf`, including console routing and the same-origin `/api/` proxy
+- app runtime `nginx.conf`, including console routing and the same-origin `/api/` and `/auth/` proxies
 - `.env.prod` rendering logic from outputs plus SSM secrets
 - bootstrap, deploy, smoke, and seed command surfaces
 - schema init, core seed, and future incremental schema migration runner
@@ -99,6 +99,7 @@ These infra scripts are generic primitives. They are not the full application li
 
 - `/servicestack/db-user`
 - `/servicestack/db-password`
+- `/servicestack/jwt-secret`
 - `/servicestack/s3-exports-bucket`
 - `/servicestack/s3-location-prefix`
 
