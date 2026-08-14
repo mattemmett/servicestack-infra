@@ -56,4 +56,4 @@ bash scripts/deploy-ghcr-poc.sh i-0eec1257722b6b1c9
 ## Notes
 
 - This is the registry-auth proof step between the public hello-world demo and the real ServiceStack runtime.
-- Keep the console bridge host untouched while this test runs on the current managed prod host.
+- Historical note: this POC predates the CloudFront-backed console rollout. Do not use it to change the current app compose runtime.

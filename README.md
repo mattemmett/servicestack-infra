@@ -12,7 +12,7 @@ Primary scope includes:
 - backend hosting
 - managed database infrastructure
 - container registry resources
-- static hosting and edge delivery
+- public edge delivery and TLS termination
 - scheduled and batch infrastructure
 - DNS, certificates, and shared IAM
 - operational recovery runbooks for protected historical data needed during migrations
@@ -114,6 +114,5 @@ It is kept only as temporary reference material during consolidation and should 
 4. Define the deployment contract: image tags, registry choice, runtime layout, and CI deploy flow.
 5. Add EC2 host and routing templates.
 6. Add DNS and certificate resources.
-7. Add S3 and CloudFront for the console frontend.
+7. Done: CloudFront and ACM front the console, API, and dashboard hostnames. The console itself is a container image on the EC2 host, so no S3 origin is used.
 8. Add optional cloud-specific services only where they provide clear value without diverging from lab behavior.
-

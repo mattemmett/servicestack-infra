@@ -47,19 +47,19 @@ Before starting checklist execution, run the Local AWS Access Workflow in `READM
 
 ## 5. Platform expansion after the baseline is proven
 
-- [x] Finalize cost-first TLS decision and upgrade trigger criteria in [tls-cost-decision.md](./tls-cost-decision.md)
-- [x] Add host-level Let's Encrypt operations runbook in [tls-letsencrypt-ec2.md](./tls-letsencrypt-ec2.md)
-- [ ] Add certificate and TLS handling if required
-- [ ] Add or confirm the registry path used for runtime images
-- [ ] Add frontend hosting path if needed for the web console
-- [ ] Add worker/scheduler runtime if needed
+- [x] Finalize cost-first TLS decision and upgrade trigger criteria in [tls-cost-decision.md](./tls-cost-decision.md) (superseded: TLS moved to CloudFront)
+- [x] Add host-level Let's Encrypt operations runbook in [tls-letsencrypt-ec2.md](./tls-letsencrypt-ec2.md) (superseded: never implemented)
+- [x] Add certificate and TLS handling: ACM wildcard for `*.service-stack.io`, terminated at CloudFront
+- [x] Add or confirm the registry path used for runtime images: GHCR, with a separate `servicestack-console` image for the web console
+- [x] Add frontend hosting path for the web console: container image on the app host, fronted by CloudFront
+- [x] Add worker/scheduler runtime: `etl-scheduler` runs in the app compose stack on the infra-managed host
 - [ ] Add SES/SQS support only if the intake path remains in scope
 
 ## 6. App rollout sequence
 
-- [ ] Deploy ETL and verify a bounded backfill against the seeded source paths
-- [ ] Verify nightly and summary ETL jobs can run against RDS
-- [ ] Deploy API plus Streamlit console and verify reads from RDS
-- [ ] Deploy Flutter console and verify it consumes the same API
+- [x] Deploy ETL and verify a bounded backfill against the seeded source paths
+- [x] Verify nightly and summary ETL jobs can run against RDS
+- [x] Deploy API plus Streamlit dashboard and verify reads from RDS
+- [x] Deploy Flutter console and verify it consumes the same API
 - [ ] Reconcile the exports contract after the first end-to-end app deployment is proven
 - [x] Define and publish the transition DNS target for the new console rollout before cutting over from `console.service-stack.io`

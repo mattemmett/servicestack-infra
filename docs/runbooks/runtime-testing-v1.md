@@ -1,5 +1,8 @@
 # Runtime Testing V1 Plan
 
+> Historical plan. The V1 runtime and production edge cutover have been completed.
+> Keep this document for context on how the first AWS runtime was validated.
+
 Scope: get a first deployable runtime on AWS for testing, without full cutover.
 
 ## V1 Outcome
@@ -15,7 +18,7 @@ V1 is done when all of the following are true:
 ## Non-Goals For V1
 
 - Full customer-facing cutover.
-- CloudFront plus S3 console hosting cutover.
+- CloudFront plus ACM production edge cutover.
 - Full scheduler/event infrastructure expansion.
 - SES/SQS intake infrastructure.
 
@@ -51,9 +54,7 @@ Exit criteria:
 Current note:
 - The EC2 ETL role read-only split has been verified manually against `servicestack-exports-warehouse-prod`, but it still needs to be codified in the owning infra repo.
 - The bucket policy deny for the EC2 role is demonstrated manually, and the producer Lambda writer remains able to write.
-- The console DNS change is committed, but the actual deployment has not been applied yet.
-- `console-next.service-stack.io` remains the transition path until the runtime is deployed and validated.
-- The new host still returns the host/nginx response, so final console runtime wiring remains a follow-on step.
+- Superseded 2026-08-13: the console, API, and dashboard now serve through CloudFront with ACM TLS. The console is a container image on the app host, not an S3-hosted site.
 
 Exit criteria:
 - ETL runtime role can read exactly what it needs and nothing more.
@@ -111,7 +112,7 @@ Exit criteria:
    - fresh deploy
    - rerun ETL
    - failure mode with bad creds or denied access
-3. Keep DNS and edge changes isolated until runtime path is stable.
+3. Keep DNS and edge changes isolated behind `-next` hostnames before cutting over live records.
 
 Exit criteria:
 - The deploy and rollback loop is repeatable.

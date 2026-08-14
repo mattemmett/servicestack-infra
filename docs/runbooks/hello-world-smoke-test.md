@@ -45,4 +45,4 @@ If the instance ID changes, use the current value from `environments/prod` outpu
 
 - This smoke test is intentionally simple and uses a public demo image.
 - It is the first validation step before moving to a private registry image and then the real ServiceStack runtime.
-- Do not use this runbook to manage the console bridge host except as a deliberate temporary test target.
+- Historical note: this POC predates the current CloudFront-backed app runtime. Do not use it to manage the current production compose stack.

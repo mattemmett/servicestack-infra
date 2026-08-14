@@ -6,8 +6,8 @@ Current runbooks:
 
 - deployment-automation.md: shared deployment contract for lab and production rollouts
 - servicestack-app-infra-contract.md: current ownership and deploy contract between `servicestack-infra` and the consolidated `servicestack` app repo
-- tls-cost-decision.md: cost-first TLS decision and upgrade triggers for when to move from host nginx TLS to ALB plus ACM
-- tls-letsencrypt-ec2.md: SSM-first runbook for issuing and renewing Let's Encrypt certificates on the current EC2 host model
+- tls-cost-decision.md: SUPERSEDED. Retains the cost rationale that ruled out ALB; TLS now terminates at CloudFront
+- tls-letsencrypt-ec2.md: SUPERSEDED. Never implemented; kept as the fallback design if CloudFront is removed
 - ghcr-smoke-test.md: private registry pull proof on the current prod host using a tiny GHCR-backed demo image
 - s3-glacier-restore.md: safe recovery workflow for historical archived exports in the production warehouse bucket
 - hello-world-smoke-test.md: first deploy-and-verify check for the current EC2 host using the POC compose stack

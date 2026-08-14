@@ -60,7 +60,7 @@ The current target topology is:
 - one AWS VPC with a public application subnet and private database subnets
 - one AWS EC2 Docker host for the production backend and reverse proxy path
 - one AWS RDS Postgres instance replacing local EC2-hosted Postgres in production
-- AWS S3 and CloudFront for the Flutter web console in production
+- CloudFront in front of the EC2 host for TLS on the console, API, and dashboard hostnames. The Flutter web console is a container image served by the app nginx, not an S3 origin.
 - containerized workers and scheduled jobs that follow the same runtime model in lab and prod
 - AWS Route 53 and ACM for service-stack.io routing and certificates
 - shared IAM roles and policies for deploy and runtime use

@@ -26,7 +26,7 @@ servicestack-infra should own infrastructure definitions for:
 - Compute hosting for backend workloads such as EC2 and ECS or Fargate
 - Database infrastructure such as RDS Postgres
 - Container registry resources such as ECR
-- Object storage and edge delivery for frontend hosting such as S3 and CloudFront
+- Edge delivery and public TLS termination such as CloudFront and ACM (the console is a container on the app host, not an S3 origin)
 - Scheduling and batch orchestration primitives such as EventBridge and ECS task scheduling
 - DNS and certificates such as Route 53 and ACM
 - Shared IAM roles and policies used by deploy pipelines and runtime services
@@ -214,7 +214,7 @@ Priority sequence to align with current consolidation intent:
 2. Consolidate existing infrastructure definitions from app repos.
 3. Stand up or validate the RDS target and migration path.
 4. Ensure the ECR path for backend image delivery.
-5. Define the frontend hosting edge path using S3 and CloudFront.
+5. Done: the frontend edge path is CloudFront in front of the app host, with the console served as a container image rather than from S3.
 6. Define ETL scheduler and runtime infrastructure.
 7. Incorporate DNS and certificate management for service-stack.io domains.
 8. Fold in IIP intake infrastructure when the application fold-in reaches that phase.

@@ -1,5 +1,9 @@
 # TLS on EC2 with Let's Encrypt (Cost-First)
 
+> **SUPERSEDED 2026-08-13.** Not implemented. TLS is terminated at CloudFront with an ACM
+> wildcard certificate; see `docs/runbooks/servicestack-app-infra-contract.md`. This runbook
+> is retained only as the fallback design if CloudFront is ever removed.
+
 Purpose: run HTTPS for the current single-host production model without introducing ALB fixed cost.
 
 This runbook uses:

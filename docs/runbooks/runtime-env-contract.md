@@ -69,9 +69,9 @@ This template keeps the same key families used in the old app runtime:
 
 - Production API DNS target: `api.service-stack.io`
 - Production dashboard DNS target: `dashboard.service-stack.io`
-- Temporary transition console target: `console-next.service-stack.io`
-- Current legacy console bridge: `console.service-stack.io` stays on the old host until the cutover is explicitly scheduled.
-- The app should target `console-next.service-stack.io` during transition, then cut over `console.service-stack.io` when the new console is validated.
+- Production console DNS target: `console.service-stack.io`
+- Transition/staging console target, when needed: `console-next.service-stack.io`
+- Public hostnames are CloudFront-backed aliases, not direct A records to the EC2 host.
 
 ## Host Upload
 
@@ -106,8 +106,9 @@ ENV_FILE=.env.prod bash scripts/deploy-via-ssm.sh <instance-id>
 
 Current validated rollout detail:
 - the app repo uploads `.env.prod` to `/opt/servicestack/app/.env.prod`
-- the app repo also appends `ENV_FILE=.env.prod` to the uploaded env payload so compose interpolation resolves the correct runtime env file on host
+- the app repo also appends `GHCR_IMAGE`, `CONSOLE_IMAGE`, and `ENV_FILE=.env.prod` to the uploaded env payload so compose interpolation resolves the correct runtime env file and image tags on host
 - the app repo uploads its own `docker-compose.yml` and `nginx.conf` beside the env file before invoking `deploy-via-ssm.sh`
+- the app repo refreshes the separately versioned `console` service and force-recreates nginx after the generic compose rollout
 
 ## Secrets Guidance
 

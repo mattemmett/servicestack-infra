@@ -1,5 +1,12 @@
 # TLS Cost Decision
 
+> **SUPERSEDED 2026-08-13.** TLS is now terminated at CloudFront using an ACM wildcard
+> certificate for `*.service-stack.io`. Let's Encrypt on-host was rejected because certbot
+> state lives on the instance root volume (`delete_on_termination = true`), so any host
+> replacement would re-issue certificates and burn Let's Encrypt rate limits. CloudFront's
+> free tier made managed, auto-renewing certificates cost-neutral at current volume.
+> Kept for the cost rationale, which still explains why ALB was not chosen.
+
 ## Decision
 
 For the current stage, keep a low-cost TLS posture:
